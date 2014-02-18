@@ -55,11 +55,12 @@
         <!-- fetch origin -->
         <exec dir="${project.basedir}/${build.target}/cached-copy"
               outputProperty="fetchresult"
-              command="git fetch origin" />
+              command="git fetch origin ${deploy.branch}" />
 
         <!-- resolve revision hash -->
         <exec dir="${project.basedir}/${build.target}/cached-copy"
               outputProperty="deploy.revision"
+              checkreturn="true"
               command="git rev-parse origin/${deploy.branch}" />
 
         <echo msg="resolved revision of ${deploy.branch} as: ${deploy.revision}" />
@@ -187,7 +188,7 @@
 
                 <!-- clone repository -->
                 <exec outputProperty="cloneresult"
-                      command="git clone -q --depth 1 ${deploy.repository}
+                      command="git clone -q ${deploy.repository}
                                ${project.basedir}/${build.target}/cached-copy" />
 
                 <echo msg="${cloneresult}" />
@@ -420,23 +421,23 @@
         </if>
 
         <netssh username="${deploy.user}"
-             password="${deploy.password}"
-              pubkeyfile="${deploy.pubkeyfile}"
-              privkeyfile="${deploy.privkeyfile}"
-             host="${deploy.server}"
-             sshlib="${deploy.sshlib}"
-             command="${linkcmd}" />
+                password="${deploy.password}"
+                pubkeyfile="${deploy.pubkeyfile}"
+                privkeyfile="${deploy.privkeyfile}"
+                host="${deploy.server}"
+                sshlib="${deploy.sshlib}"
+                command="${linkcmd}" />
 
         <!-- revision tag -->
         <echo msg="placing hash in REVISION: ${deploy.revision}" />
 
         <netssh username="${deploy.user}"
-             password="${deploy.password}"
-              pubkeyfile="${deploy.pubkeyfile}"
-              privkeyfile="${deploy.privkeyfile}"
-             host="${deploy.server}"
-             sshlib="${deploy.sshlib}"
-             command="echo ${deploy.revision} > ${deploy.path}${deploy.ds}current${deploy.ds}REVISION" />
+                password="${deploy.password}"
+                pubkeyfile="${deploy.pubkeyfile}"
+                privkeyfile="${deploy.privkeyfile}"
+                host="${deploy.server}"
+                sshlib="${deploy.sshlib}"
+                command="echo ${deploy.revision} > ${deploy.path}${deploy.ds}current${deploy.ds}REVISION" />
 
         <!-- Clean history -->
         <phingcall target="deploy.clean_history" />
