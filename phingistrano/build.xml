@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="modules" description="phing loading external modules" default="info">
-
     <import file="${phingistrano.dir}/deploy/build.xml" />
     <import file="${phingistrano.dir}/version/build.xml" />
     <import file="${phingistrano.dir}/sniff/build.xml" />
@@ -22,36 +21,38 @@
          Phing version 2.5 you will not need this section any more
          because namespaces will be resolved fully from imported buildfiles
     -->
-    <target name="tag" />
-    <target name="notify" />
-    <target name="currentbranch" />
-    <target name="clean" />
-    <target name="cleanup" />
-    <target name="clean_history" />
-    <target name="verbose" />
-    <target name="prepare" />
-    <target name="prepare.distributed" />
-    <target name="prepare.direct" />
-    <target name="prepare.hybrid" />
-    <target name="open" />
-    <target name="do" />
-    <target name="convert" />
-    <target name="distributed" />
-    <target name="direct" />
-    <target name="hybrid" />
-    <target name="deliver" />
-    <target name="upload" />
-    <target name="download" />
-    <target name="pushtags" />
-    <target name="memcached" />
-    <target name="memcachedump" />
-    <target name="getlist" />
-    <target name="remote" />
-    <target name="remotecmd" />
-    <target name="checkoutdevelop" />
-    <target name="checkoutmaster" />
-    <target name="pull" />
-    <target name="precache" />
-    <target name="postcache" />
+    <target name="dummy"><echo msg=""/></target>
+
+    <target name="tag" depends="dummy"/>
+    <target name="notify" depends="dummy"/>
+    <target name="currentbranch" depends="dummy"/>
+    <target name="clean" depends="dummy"/>
+    <target name="cleanup" depends="dummy"/>
+    <target name="clean_history" depends="dummy"/>
+    <target name="verbose" depends="dummy"/>
+    <target name="prepare" depends="dummy"/>
+    <target name="prepare.distributed" depends="dummy"/>
+    <target name="prepare.direct" depends="dummy"/>
+    <target name="prepare.hybrid" depends="dummy"/>
+    <target name="open" depends="dummy"/>
+    <target name="do" depends="dummy"/>
+    <target name="convert" depends="dummy"/>
+    <target name="distributed" depends="dummy"/>
+    <target name="direct" depends="dummy"/>
+    <target name="hybrid" depends="dummy"/>
+    <target name="deliver" depends="dummy"/>
+    <target name="upload" depends="dummy"/>
+    <target name="download" depends="dummy"/>
+    <target name="pushtags" depends="dummy"/>
+    <target name="memcached" depends="dummy"/>
+    <target name="memcachedump" depends="dummy"/>
+    <target name="getlist" depends="dummy"/>
+    <target name="remote" depends="dummy"/>
+    <target name="remotecmd" depends="dummy"/>
+    <target name="checkoutdevelop" depends="dummy"/>
+    <target name="checkoutmaster" depends="dummy"/>
+    <target name="pull" depends="dummy"/>
+    <target name="precache" depends="dummy"/>
+    <target name="postcache" depends="dummy"/>
 
 </project>
