@@ -256,14 +256,19 @@ class NetSshTask extends Task {
 
         $could_auth = null;
         if ( $this->pubkeyfile ) {
-            $pubfile = realpath($this->pubkeyfile);
-            $privfile = realpath($this->privkeyfile);
-            echo $pubfile."\n";
-            echo $privfile."\n";
-            echo $this->privkeyfilepassphrase."\n";
-            $could_auth = ssh2_auth_pubkey_file($this->connection, $this->username, $pubfile, $privfile, $this->privkeyfilepassphrase);
+            $could_auth = ssh2_auth_pubkey_file(
+                $this->connection,
+                $this->username,
+                $this->pubkeyfile,
+                $this->privkeyfile,
+                $this->privkeyfilepassphrase
+            );
         } else {
-            $could_auth = ssh2_auth_password($this->connection, $this->username, $this->password);
+            $could_auth = ssh2_auth_password(
+                $this->connection,
+                $this->username,
+                $this->password
+            );
         }
         if (!$could_auth) {
             throw new BuildException("Could not authenticate connection!");
