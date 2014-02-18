@@ -39,55 +39,55 @@ class NetSshTask extends Task {
     private $sshlib;
     private $privkeyfilepassphrase = '';
     private $crypt = 'RSA';
-    
+
     /**
      * The name of the property to capture (any) output of the command
      * @var string
      */
     private $property = "";
-    
+
     /**
      * Whether to display the output of the command
      * @var boolean
      */
     private $display = true;
 
-    public function setHost($host) 
+    public function setHost($host)
     {
         $this->host = $host;
     }
 
-    public function getHost() 
+    public function getHost()
     {
         return $this->host;
     }
 
-    public function setPort($port) 
+    public function setPort($port)
     {
         $this->port = $port;
     }
 
-    public function getPort() 
+    public function getPort()
     {
         return $this->port;
     }
 
-    public function setUsername($username) 
+    public function setUsername($username)
     {
         $this->username = $username;
     }
 
-    public function getUsername() 
+    public function getUsername()
     {
         return $this->username;
     }
 
-    public function setPassword($password) 
+    public function setPassword($password)
     {
         $this->password = $password;
     }
 
-    public function getPassword() 
+    public function getPassword()
     {
         return $this->password;
     }
@@ -107,7 +107,7 @@ class NetSshTask extends Task {
     {
         return $this->pubkeyfile;
     }
-    
+
     /**
      * Sets the private key file of the user to scp
      */
@@ -123,7 +123,7 @@ class NetSshTask extends Task {
     {
         return $this->privkeyfile;
     }
-    
+
     /**
      * Sets the private key file passphrase of the user to scp
      */
@@ -143,7 +143,7 @@ class NetSshTask extends Task {
     /**
      * Sets the ssh library identifier
      */
-    public function setSshlib($sshlib) 
+    public function setSshlib($sshlib)
     {
         $this->sshlib = strtolower($sshlib);
     }
@@ -151,11 +151,11 @@ class NetSshTask extends Task {
     /**
      * Returns the ssh library identifier
      */
-    public function getSshlib() 
+    public function getSshlib()
     {
         return $this->sshlib;
     }
-    
+
     /**
      * Sets the encryption library identifier
      */
@@ -171,17 +171,17 @@ class NetSshTask extends Task {
     {
         return $this->crypt;
     }
-    
-    public function setCommand($command) 
+
+    public function setCommand($command)
     {
         $this->command = $command;
     }
 
-    public function getCommand() 
+    public function getCommand()
     {
         return $this->command;
     }
-    
+
     /**
      * Sets the name of the property to capture (any) output of the command
      * @param string $property
@@ -190,7 +190,7 @@ class NetSshTask extends Task {
     {
         $this->property = $property;
     }
-    
+
     /**
      * Sets whether to display the output of the command
      * @param boolean $display
@@ -200,32 +200,32 @@ class NetSshTask extends Task {
         $this->display = Boolean::cast($display);
     }
 
-    public function init() 
+    public function init()
     {
     }
-    
+
     public function main()
     {
         switch ($this->sshlib) {
 
             //if the sshlib attribute is netssh use the netssh method
             case 'netssh':
-                if (!$this->requireable('Net/SSH2.php')) { 
+                if (!$this->requireable('Net/SSH2.php')) {
                     throw new BuildException("To use SshTask, you must have the Net_SSH2 library (phpseclib.sourceforge.net) in your php include_path.");
                 } else {
                     $this->netssh();
                 }
             break;
-            
+
             //if the sshlib attribute is ssh2 use the ssh2 method
             case 'ssh2':
-                if (!function_exists('ssh2_connect')) { 
+                if (!function_exists('ssh2_connect')) {
                     throw new BuildException("To use SshTask, you must have the PHP ssh2 extension.");
                 } else {
                     $this->ssh2();
                 }
             break;
-            
+
             //if no sshlib is specified try to find a usable library
             default:
                 //first try ssh2 by checking if the function ssh2_connect exists
@@ -243,12 +243,12 @@ class NetSshTask extends Task {
         }
     }
 
-    public function ssh2() 
-    {   
+    public function ssh2()
+    {
         if ($this->host == "" || $this->username == "") {
             throw new BuildException("Attribute 'hostname' and 'username' must be set");
         }
-        
+
         $this->connection = ssh2_connect($this->host, $this->port);
         if (is_null($this->connection)) {
             throw new BuildException("Could not establish connection to " . $this->host . ":" . $this->port . "!");
@@ -278,36 +278,36 @@ class NetSshTask extends Task {
         if (!$stream) {
             throw new BuildException("Could not execute command!");
         }
-        
+
         $this->log("Executing command {$this->command}", Project::MSG_VERBOSE);
-        
+
         $output = "";
         stream_set_blocking( $stream, true );
-        
+
         while( $buf = fread($stream,4096) ){
             if ($this->display) {
                 print($buf);
             }
-            
+
             $output .= $buf;
         }
         $this->log("Result: {$output}", Project::MSG_VERBOSE);
         if (!empty($this->property)) {
             $this->project->setProperty($this->property, $output);
         }
-        
+
         fclose($stream);
     }
-    
-    public function netssh() 
-    {   
+
+    public function netssh()
+    {
         require_once('Net/SSH2.php');
         if ($this->host == "" || $this->username == "") {
             throw new BuildException("Attribute 'hostname' and 'username' must be set");
         }
 
         $this->connection = new Net_SSH2($this->host, $this->port);
-        
+
         if (is_null($this->connection)) {
             throw new BuildException("Could not establish connection to " . $this->host . ":" . $this->port . "!");
         }
@@ -315,7 +315,7 @@ class NetSshTask extends Task {
         $could_auth = null;
         if ( $this->pubkeyfile ) {
             $cryptclass = 'Crypt_'.$this->crypt;
-            if (!require_once('Crypt/'.$this->crypt.'.php')) { 
+            if (!require_once('Crypt/'.$this->crypt.'.php')) {
                 throw new BuildException("To use Public or Private key files, you need to install $cryptclass from PHP Secure Communications Library (phpseclib.sourceforge.net).");
             }
             $key = new $cryptclass;
@@ -336,19 +336,19 @@ class NetSshTask extends Task {
         if (!$output) {
             $output = "";
         }
-      
+
         $this->log("Executing command {$this->command}", Project::MSG_VERBOSE);
         $this->log("Result: {$output}", Project::MSG_VERBOSE);
-        
+
         if ($this->display) {
             print($output);
         }
-        
+
         if (!empty($this->property)) {
             $this->project->setProperty($this->property, $output);
         }
     }
-    
+
     /**
      * Checks if the file can be required from the include path.
      * @param string $filename
@@ -370,7 +370,7 @@ class NetSshTask extends Task {
 
         return false;
     }
-     
+
 
 }
 ?>
