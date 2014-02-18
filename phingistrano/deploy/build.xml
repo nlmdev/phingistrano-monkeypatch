@@ -10,9 +10,9 @@
     <property name="deploy.log"          value="2&gt;&amp;1 | tee ${deploy.path}${deploy.ds}deploy.log" />
     <property name="deploy.strategy"     value="distributed" />
     <property name="deploy.sshlib"       value="" />
-    
-    
-    
+
+
+
     <!-- ============================================  -->
     <!-- Custom Taskdefs                               -->
     <!-- ============================================  -->
@@ -94,7 +94,7 @@
 
         <exec command="cp -R ${project.basedir}/${build.target}/cached-copy
                        ${project.basedir}/${build.target}/tmp" />
-        
+
         <!-- strip git overhead -->
 	    <exec dir="${project.basedir}/${build.target}/tmp"
 	          command="for i in `find . -name .git` ; do
@@ -144,6 +144,8 @@
         <!-- link it up -->
          <netssh username="${deploy.user}"
               password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
               host="${deploy.server}"
               sshlib="${deploy.sshlib}"
               command="rm ${deploy.path}${deploy.ds}current ${deploy.log};
@@ -153,12 +155,14 @@
          <!-- deposit the deploy log in the log folder -->
          <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="cp ${deploy.path}${deploy.ds}deploy.log
                       ${deploy.path}${deploy.ds}${build.target}${deploy.ds}logs${deploy.ds}deploy${deploy.ds}${deploy.ts}.deploy.log;
                       rm ${deploy.path}${deploy.ds}deploy.log; " />
-                      
+
         <!-- Clean history -->
         <phingcall target="deploy.clean_history" />
 
@@ -196,7 +200,7 @@
                 <echo msg="${submoduleinitresult}"/>
             </then>
         </if>
-        
+
         <!-- Pre-Cache Hook -->
         <phingcall target="precache" />
     </target>
@@ -208,6 +212,8 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="if [ ! -d ${deploy.path}${deploy.ds}${build.target}${deploy.ds}cached-copy ]; then
@@ -219,22 +225,28 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="mkdir -p ${deploy.path}${deploy.ds}${build.target}${deploy.ds}tarballs ${deploy.log};" />
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="mkdir -p ${deploy.path}${deploy.ds}${build.target}${deploy.ds}logs${deploy.ds}deploy ${deploy.log};" />
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="mkdir -p ${deploy.path}${deploy.ds}releases  ${deploy.log};" />
-             
+
         <!-- Pre-Cache Hook -->
         <phingcall target="precache" />
 
@@ -262,6 +274,8 @@
         <!-- update the repository and reset it to the current revision -->
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="(cd ${deploy.path}${deploy.ds}${build.target}${deploy.ds}cached-copy &amp;&amp;
@@ -276,6 +290,8 @@
         <!-- reset submodules to their appropriate revisions -->
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="for mod in `(cd ${deploy.path}${deploy.ds}${build.target}${deploy.ds}cached-copy &amp;&amp;
@@ -289,17 +305,21 @@
         <!-- update submodules -->
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="(cd ${deploy.path}${deploy.ds}${build.target}${deploy.ds}cached-copy &amp;&amp;
                        git submodule update) ${deploy.log}; " />
-                       
+
         <!-- Post-Cache Hook -->
         <phingcall target="postcache" />
 
         <!-- make deployment directory and tarball archive -->
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="mkdir ${deploy.path}${deploy.ds}releases${deploy.ds}${deploy.ts} ${deploy.log};
@@ -318,6 +338,8 @@
         <!-- print filesize info -->
         <netssh username="${deploy.user}"
               password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
               host="${deploy.server}"
               sshlib="${deploy.sshlib}"
               command="echo File size ${deploy.log};
@@ -339,10 +361,12 @@
         <echo msg="creating directory: ${deploy.path}${deploy.ds}releases${deploy.ds}${deploy.ts}" />
 
         <netssh username="${deploy.user}"
-             password="${deploy.password}"
-             host="${deploy.server}"
-             sshlib="${deploy.sshlib}"
-             command="mkdir -p ${deploy.path}${deploy.ds}releases${deploy.ds}${deploy.ts}" />
+                password="${deploy.password}"
+                pubkeyfile="${deploy.pubkeyfile}"
+                privkeyfile="${deploy.privkeyfile}"
+                host="${deploy.server}"
+                sshlib="${deploy.sshlib}"
+                command="mkdir -p ${deploy.path}${deploy.ds}releases${deploy.ds}${deploy.ts}" />
 
         <!-- unpack tarball -->
         <echo msg="unpacking: ${deploy.path}${deploy.ds}tarballs${deploy.ds}${deploy.tarball}
@@ -351,6 +375,8 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="tar -xvf ${deploy.path}${deploy.ds}${deploy.tarball} --directory=${deploy.path}${deploy.ds}releases${deploy.ds}${deploy.ts}" />
@@ -360,6 +386,8 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="rm ${deploy.path}${deploy.ds}${deploy.tarball}" />
@@ -369,6 +397,8 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="rm -rf ${deploy.path}${deploy.ds}current" />
@@ -391,6 +421,8 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="${linkcmd}" />
@@ -400,15 +432,17 @@
 
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="echo ${deploy.revision} > ${deploy.path}${deploy.ds}current${deploy.ds}REVISION" />
-             
+
         <!-- Clean history -->
         <phingcall target="deploy.clean_history" />
 
     </target>
-    
+
 
     <!-- ============================================  -->
     <!-- Target: upload                                -->
@@ -422,7 +456,9 @@
         <echo msg="to target: ${deploy.path}${deploy.ds}" />
 
         <netscp username="${deploy.user}"
-             password="${deploy.password}"
+                password="${deploy.password}"
+                pubkeyfile="${deploy.pubkeyfile}"
+                privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              todir="${deploy.path}${deploy.ds}"
@@ -480,6 +516,8 @@
         <echo msg="restarting memcached" />
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="echo ${deploy.password} | sudo -S /etc/init.d/memcached restart" />
@@ -500,18 +538,20 @@
         <echo msg="${deploy.user}&#64;${deploy.server}&#36; ${command}" />
         <netssh username="${deploy.user}"
              password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
              host="${deploy.server}"
              sshlib="${deploy.sshlib}"
              command="echo ${deploy.password} | ${command}" />
     </target>
-    
+
     <!-- ============================================  -->
     <!-- Target: cleanup                                -->
     <!-- ============================================  -->
     <target name="cleanup" >
         <foreach list="${deploy.servers}" param="deploy.server" target="deploy.clean_history" />
     </target>
-    
+
     <!-- ============================================  -->
     <!-- Target: clean_history                                -->
     <!-- ============================================  -->
@@ -523,6 +563,8 @@
                 <php expression="${deploy.history} + 1" returnProperty="sum"/>
                 <netssh username="${deploy.user}"
                     password="${deploy.password}"
+              pubkeyfile="${deploy.pubkeyfile}"
+              privkeyfile="${deploy.privkeyfile}"
                     host="${deploy.server}"
                     sshlib="${deploy.sshlib}"
                     command="(
