@@ -104,7 +104,12 @@ class GitDescribeTask extends GitBaseTask
         try {
             $output = $command->execute();
         } catch (Exception $e) {
-            throw new BuildException('Task execution failed');
+            throw new BuildException(
+                sprintf(
+                    'Task execution failed: %s',
+                    $e->getMessage()
+                )
+            );
         }
         
         if (null !== $this->outputProperty) {
