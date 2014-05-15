@@ -1,0 +1,10 @@
+{
+    "name": "nlmdev/phingistrano-monkeypatch",
+    "description": "phingistrano monkey patch",
+    "authors": [
+        {
+            "name": "Nlm Users",
+            "email": "nono@example.com"
+        }
+    ]
+}
